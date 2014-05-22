@@ -1,0 +1,24 @@
+{
+  "name": "irc-web-link",
+  "version": "1.0.0",
+  "description": "Link an IRC channel to a chatbox on your website.",
+  "main": "server.js",
+  "dependencies": {
+    "irc": "^0.3.6",
+    "socket.io": "^0.9.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctrlcctrlv/irc-web-link"
+  },
+  "author": "Fredrick Brennan <admin@8chan.co>",
+  "license": "Apache2",
+  "bugs": {
+    "url": "https://github.com/ctrlcctrlv/irc-web-link/issues"
+  },
+  "homepage": "https://github.com/ctrlcctrlv/irc-web-link"
+}

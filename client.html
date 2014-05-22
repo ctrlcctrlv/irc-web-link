@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Example client page</title>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+<style>
+pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
+</style>
+</head><body>
+
+<pre>
+</pre>
+<form id="submit_chat">
+<input type="text" id="chat"><input type="submit">
+</form>
+
+<script>
+	$(function(){
+	var socket = io.connect('https://node.8chan.co');
+
+	function add_data(data) {
+		data = "<span class='irc-line'>" + data + "</span>";
+
+		$('pre').append(data);
+		
+		if ($('.irc-line').length > 10) {
+			$('.irc-line:first').remove();
+		}
+	}
+
+	socket.on('irc', function (data) {
+		var command = data.command;
+		var nick = data.nick;
+		var post = true;
+
+		if (command === "PING") {
+			post = false;
+		}
+
+		if (command === "PRIVMSG") {
+			if (data.args[0] !== '#8chan') {
+				post = false;
+			}
+			var text = data.args.slice(1).join(" ");
+			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			var formatted = "<span title='"+data.host+"'>&lt;"+nick+"&gt;</em> " + text + "\\n";
+		} else {
+			var text = data.args.join(" ");
+			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			var formatted = "<strong>"+command+"</strong> " + (nick ? "<em title='"+data.host+"'>"+nick+"</em> " : "") + text + "\\n";
+		}
+
+		if (post) {
+			add_data(formatted);
+		}
+	});
+
+	$('#submit_chat').on('submit', function(e){
+		msg = $('#chat').val();
+		e.preventDefault();
+		socket.emit("chat", {"msg":msg});
+		$('#chat').val('');
+	});
+	});
+</script>
+</body>
+</html>

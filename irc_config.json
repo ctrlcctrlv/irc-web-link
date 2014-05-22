@@ -1,0 +1,16 @@
+{
+	"server": "irc.rizon.net",
+	"botName": "Hachi-chan",
+	"options": {
+		"debug": true,
+		"channels": [
+			"#8chan"
+		],
+		"floodProtection": true,
+		"autoConnect": false,
+		"userName": "hachi",
+		"realName": "Hachi-chan ^_^"
+	},
+	"admin": "copypaste",
+	"bans": []
+}
