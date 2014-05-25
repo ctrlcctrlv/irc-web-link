@@ -55,6 +55,8 @@ serv_io.sockets.on("connection", function (socket) {
 
 	socket.on('chat', function(data) {
 		// Note: cf-connecting-ip when using CloudFlare; this is dependant on your webserver setup. You may also have to parse X-Forwarded-For.
+		// Uncomment for non-CloudFlare setups:
+		// var ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.address;
 		var ip = socket.handshake.headers['cf-connecting-ip'];
 		var formatted_msg = ip + ': ' + data.msg;
 		var now = new Date();
