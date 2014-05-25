@@ -15,7 +15,7 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 
 <script>
 	$(function(){
-	var socket = io.connect('https://node.8chan.co');
+	var socket = io.connect('https://node.8chan.co'); //change this to your server
 
 	function add_data(data) {
 		data = "<span class='irc-line'>" + data + "</span>";
@@ -37,16 +37,16 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 		}
 
 		if (command === "PRIVMSG") {
-			if (data.args[0] !== '#8chan') {
+			if (data.args[0] !== '#8chan') { //change this to your channel
 				post = false;
 			}
 			var text = data.args.slice(1).join(" ");
 			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			var formatted = "<span title='"+data.host+"'>&lt;"+nick+"&gt;</em> " + text + "\\n";
+			var formatted = "<span title='"+data.host+"'>&lt;"+nick+"&gt;</em> " + text + "\n";
 		} else {
 			var text = data.args.join(" ");
 			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			var formatted = "<strong>"+command+"</strong> " + (nick ? "<em title='"+data.host+"'>"+nick+"</em> " : "") + text + "\\n";
+			var formatted = "<strong>"+command+"</strong> " + (nick ? "<em title='"+data.host+"'>"+nick+"</em> " : "") + text + "\n";
 		}
 
 		if (post) {
