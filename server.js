@@ -58,7 +58,7 @@ serv_io.sockets.on("connection", function (socket) {
 		// Uncomment for non-CloudFlare setups:
 		// var ip = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.address;
 		var ip = socket.handshake.headers['cf-connecting-ip'];
-		var formatted_msg = ip + ': ' + data.msg;
+		var formatted_msg = ip + ': ' + data.msg.substring(0,( 512 - (ip.length+2) ));
 		var now = new Date();
 		if (spoken[ip]) {
 			var t = new Date(spoken[ip]);
@@ -75,7 +75,7 @@ serv_io.sockets.on("connection", function (socket) {
 			bot.say(channel, formatted_msg);
 			var a = new Array();
 			a[0] = channel;
-			a = a.concat(data.msg.split(' '));
+			a = a.concat(formatted_msg.split(' '));
 
 			m = {
 				command: "PRIVMSG",
