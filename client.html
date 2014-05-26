@@ -41,7 +41,7 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 				post = false;
 			}
 			var text = data.args.slice(1).join(" ");
-			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}: /, '');
 			var formatted = "<span title='"+data.host+"'>&lt;"+nick+"&gt;</em> " + text + "\n";
 		} else {
 			var text = data.args.join(" ");
