@@ -70,6 +70,8 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 
 		var levelsdeep = 0;
 		var bold = false;
+		var underline = false;
+		var italic = false;
 		for (var i = 0, len = text.length; i < len; i++) {
 			if (text.charAt(i) === '\u0003') { 
 				var c = ''; 
@@ -136,6 +138,26 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 					levelsdeep += 1;
 					textcopy = textcopy.replace('\u0002', '<span style="font-weight:bold">');
 					bold = true;
+				}
+			} else if (text.charAt(i) === '\u001f'){
+				if (underline) {
+					levelsdeep -= 1;
+					textcopy = textcopy.replace('\u001f', '</span>');
+					underline = false;
+				} else {
+					levelsdeep += 1;
+					textcopy = textcopy.replace('\u001f', '<span style="text-decoration:underline">');
+					underline = true;
+				}
+			} else if (text.charAt(i) === '\u001d'){
+				if (italic) {
+					levelsdeep -= 1;
+					textcopy = textcopy.replace('\u001d', '</span>');
+					italic = false;
+				} else {
+					levelsdeep += 1;
+					textcopy = textcopy.replace('\u001d', '<span style="font-style:italic">');
+					italic = true;
 				}
 			} else if (text.charAt(i) === '\u000f') {
 				var endspans = '';
