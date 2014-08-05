@@ -125,10 +125,8 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 					var span = '<span style="'+css+'">';
 
 					textcopy = textcopy.replace('\u0003'+colordef, span);
-					console.log(css);
 				}
 
-				console.log(colors);
 			} else if (text.charAt(i) === '\u0002'){
 				if (bold) {
 					levelsdeep -= 1;
@@ -153,7 +151,6 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 			textcopy += '</span>';
 		}
 
-		console.log(textcopy);
 		var formatted = (!msg ? "<strong>"+command+"</strong> " : "") + (nick ? "&lt;<span title='"+data.host+"'>"+nick+"</span>&gt; " : "") + textcopy + "\n";
 
 		if (post) {
