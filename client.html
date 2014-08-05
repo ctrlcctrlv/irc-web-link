@@ -14,6 +14,25 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 </form>
 
 <script>
+	var mirc_colors = {
+		0: 'white',
+		1: 'black',
+		2: 'navy',
+		3: 'green',
+		4: 'red',
+		5: 'brown',
+		6: 'purple',
+		7: 'orange',
+		8: 'yellow',
+		9: 'lightgreen',
+		10: 'teal',
+		11: 'cyan',
+		12: 'blue',
+		13: 'pink',
+		14: 'grey',
+		15: 'lightgrey'
+	};
+
 	$(function(){
 	var socket = io.connect('https://node.8chan.co'); //change this to your server
 
@@ -31,28 +50,106 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 		var command = data.command;
 		var nick = data.nick;
 		var post = true;
+		var msg = false;
 
 		if (command === "PING") {
 			post = false;
 		}
 
 		if (command === "PRIVMSG") {
-			if (data.args[0] !== '#8chan') { //change this to your channel
+			if (data.args[0] !== '#8chan') {
 				post = false;
-			}
-			var text = data.args.slice(1).join(" ");
-			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}: /, '');
-			var formatted = "<span title='"+data.host+"'>&lt;"+nick+"&gt;</em> " + text + "\n";
+			}   
+			var text = data.args.slice(1).join(" "); 
+			msg = true;
 		} else {
-			var text = data.args.join(" ");
-			text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			var formatted = "<strong>"+command+"</strong> " + (nick ? "<em title='"+data.host+"'>"+nick+"</em> " : "") + text + "\n";
+			var text = data.args.join(" "); 
+		}   
+		text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/^[0-9A-Fa-f.:]+ /, ''); 
+		var textcopy = text;
+
+		var levelsdeep = 0;
+		for (var i = 0, len = text.length; i < len; i++) {
+			if (text.charAt(i) === '\u0003') { 
+				var c = ''; 
+				var colordef = ''; 
+				var iscolordef = true;
+				var nofg = false;
+				var comma = false;
+				var ints = 0;
+				for (var ii = 1; ii <= 5; ii++) {
+					c = text.charAt(i+ii);
+					if (c === ',') {
+						ints = 0;
+						if (ii === 1) {
+							nofg = true;
+						}   
+						if (comma) {
+							if (colordef === ',') iscolordef = false;
+							break;
+						}   
+						comma = true;
+					} else if (!/[0-9]/.test(c)) {
+						if (colordef.length === 0) {
+							iscolordef = false;
+						}
+						break;
+					} else {
+						ints++;
+						if (ints > 2) {
+							break;
+						}
+					}
+					colordef += c;
+				}
+				if (iscolordef) {
+					var css = '';
+					var colors = colordef.split(',');
+
+					if (colors[0] > 15 || colors[1] > 15) {
+						iscolordef = false;
+						continue;
+					}
+
+					levelsdeep += 1;
+
+					if (nofg) {
+						css = 'background-color: ' + mirc_colors[parseInt(colors[0])];
+					} else if (!colors[1]) {
+						css = 'color: ' + mirc_colors[parseInt(colors[0])];
+					} else {
+						css = 'color: ' + mirc_colors[parseInt(colors[0])] + '; background-color: ' + mirc_colors[parseInt(colors[1])];
+					}
+
+					var span = '<span style="'+css+'">';
+
+					textcopy = textcopy.replace('\u0003'+colordef, span);
+					console.log(css);
+				}
+
+				console.log(colors);
+			} else if (text.charAt(i) === '\u000f') {
+				var endspans = '';
+				for (var iii = 0; iii < levelsdeep; iii++) {
+					endspans += '</span>';
+				}
+				textcopy = textcopy.replace('\u000f', endspans);
+				levelsdeep = 0;
+			}
 		}
+
+		for (var i = 0; i < levelsdeep; i++) {
+			textcopy += '</span>';
+		}
+
+		console.log(textcopy);
+		var formatted = (!msg ? "<strong>"+command+"</strong> " : "") + (nick ? "&lt;<span title='"+data.host+"'>"+nick+"</span>&gt; " : "") + textcopy + "\n";
 
 		if (post) {
 			add_data(formatted);
 		}
 	});
+
 
 	$('#submit_chat').on('submit', function(e){
 		msg = $('#chat').val();
