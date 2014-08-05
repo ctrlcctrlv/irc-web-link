@@ -69,6 +69,7 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 		var textcopy = text;
 
 		var levelsdeep = 0;
+		var bold = false;
 		for (var i = 0, len = text.length; i < len; i++) {
 			if (text.charAt(i) === '\u0003') { 
 				var c = ''; 
@@ -128,6 +129,16 @@ pre {background-color:black;color:white;white-space:pre-wrap;text-align:left}
 				}
 
 				console.log(colors);
+			} else if (text.charAt(i) === '\u0002'){
+				if (bold) {
+					levelsdeep -= 1;
+					textcopy = textcopy.replace('\u0002', '</span>');
+					bold = false;
+				} else {
+					levelsdeep += 1;
+					textcopy = textcopy.replace('\u0002', '<span style="font-weight:bold">');
+					bold = true;
+				}
 			} else if (text.charAt(i) === '\u000f') {
 				var endspans = '';
 				for (var iii = 0; iii < levelsdeep; iii++) {
